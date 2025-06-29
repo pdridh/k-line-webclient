@@ -24,11 +24,12 @@ export function AuthProvider({ children }) {
             body: JSON.stringify({ email, password }),
         });
 
-        const data = await res.json();
+        const resData = await res.json();
         if (!res.ok) {
-            throw data;
+            throw resData;
         } else {
-            setUser(data);
+            setUser(resData.data);
+            return resData.data;
         }
     };
 

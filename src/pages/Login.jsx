@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 
 function InputField({
@@ -44,6 +44,7 @@ export default function Login() {
     const [fieldErrors, setFieldErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { state } = useLocation();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -51,8 +52,38 @@ export default function Login() {
         setFieldErrors({});
         setLoading(true);
         try {
-            await login(email, password);
-            navigate("/");
+            const user = await login(email, password);
+
+            if (user == null) {
+                // No user therefore redirect to login
+                navigate("/login");
+                return;
+            }
+
+            // At first check if the user is trying a route
+            if (state?.path) {
+                navigate(state.path);
+                return;
+            }
+
+            switch (user.type) {
+                case "admin":
+                    navigate("/admin");
+                    break;
+                case "register":
+                    navigate("/cashier");
+                    break;
+                case "kitchen":
+                    navigate("/kitchen");
+                    break;
+                case "waiter":
+                    navigate("/waiter");
+                    break;
+                case "driver":
+                    break;
+                default:
+                    navigate("/404");
+            }
         } catch (err) {
             if (err?.code == "ERR_JSON_VALIDATION") {
                 const errs = {};
