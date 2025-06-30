@@ -5,6 +5,7 @@ import Admin from "./pages/Admin";
 import RequireAuth from "./auth/RequireAuth";
 import NotFound from "./pages/NotFound";
 import Redirector from "./pages/Redirector";
+import Waiter from "./pages/Waiter";
 
 export default function App() {
     return (
@@ -13,10 +14,18 @@ export default function App() {
                 <Route index element={<Redirector></Redirector>} />
                 <Route path="/login" element={<Login />} />
                 <Route
-                    path="admin"
+                    path="/admin"
                     element={
                         <RequireAuth roles={["admin"]}>
                             <Admin />
+                        </RequireAuth>
+                    }
+                />
+                <Route
+                    path="/waiter"
+                    element={
+                        <RequireAuth roles={["admin", "waiter"]}>
+                            <Waiter />
                         </RequireAuth>
                     }
                 />
